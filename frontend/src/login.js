@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import axios from 'axios';
 import './App.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
+  // const navigate = useNavigate(); // Hook for navigation
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Login Submitted:', { email, password });
 
-    // Redirect to Dashboard
-    navigate('/dashboard');
+    try {
+      const response = await axios.post('http://localhost:5000/login', { email, password });
+      console.log('Login Successful:', response.data);
+
+      // Redirect to Dashboard
+      // navigate('/dashboard');
+    } catch (error) {
+      console.error('Login Failed:', error.response.data);
+    }
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
-      <img src="image.png" alt="Logo" width="200" />
-
-
+        <img src="image.png" alt="Logo" width="200" />
         <h2>Admin Login</h2>
-
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input

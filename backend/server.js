@@ -24,26 +24,16 @@ const User = mongoose.model("User", UserSchema);
 
 // Login Route
 app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-  
-    console.log("Received login request:", req.body); // Debugging
-  
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
-    }
-  
-    const user = await User.findOne({ email });
-  
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-  
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-  
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ token, email });
-  });
-  
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  res.json({ token, email });
+});
+
+app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
